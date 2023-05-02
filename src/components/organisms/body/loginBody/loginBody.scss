@@ -1,0 +1,83 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  text-align: center;
+
+  &>* {
+    margin: auto;
+  }
+
+  h2 {
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.5rem;
+      align-items: center;
+
+      label {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #666;
+        margin-bottom: 0.5rem;
+      }
+
+      input[type="email"],
+      input[type="password"] {
+        border: none;
+        border-bottom: 1px solid #ccc;
+        font-size: 1.2rem;
+        padding: 0.5rem 0;
+
+        &:focus {
+          outline: none;
+          border-bottom: 1px solid #333;
+        }
+      }
+    }
+
+    button[type="submit"] {
+      background-color: rgba(80, 200, 120, 1);
+      color: black;
+      border: none;
+      border-radius: 4px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: rgba(175, 55, 135, 1);
+        color: white;
+      }
+    }
+  }
+
+  button {
+    background-color: transparent;
+    border: none;
+    color: #666;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #333;
+    }
+  }
+}

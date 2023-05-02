@@ -1,0 +1,22 @@
+.item {
+  display: inline-block;
+  margin-right: 20px;
+  vertical-align: top;
+  width: calc(33.33% - 20px); /* ajustez cette valeur en fonction du nombre d'articles que vous voulez afficher sur une ligne */
+  box-sizing: border-box;
+
+  img {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .item-details {
+    h2 {
+      margin-top: 0;
+    }
+
+    p {
+      margin-bottom: 10px;
+    }
+  }
+}
