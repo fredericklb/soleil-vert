@@ -1,8 +1,9 @@
 import React from 'react';
 import Header from '../../organisms/header/header';
+import StockManagementBody from '../../organisms/body/stockManagementBody/stockManagementBody';
 import Footer from '../../organisms/footer/footer';
 
-const StockManagementBody = () => {
+const StockManagement = () => {
     return (
         <div>
             <Header />
@@ -12,4 +13,4 @@ const StockManagementBody = () => {
     );
 };
 
-export default StockManagementBody;
+export default StockManagement;

@@ -1,0 +1,22 @@
+.payment-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+}
+
+.payment-title {
+    margin: 0;
+    text-align: center;
+}
+
+.payment-form {
+    width: 100%;
+    text-align: center;
+}
+
+.payment-form__pay-button {
+    background-color: rgba(175, 55, 135, 1);
+    color: white;
+}

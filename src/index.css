@@ -5,7 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  width: 100%;
+  max-width: 100%;
 }
 
 code {
@@ -15,14 +15,14 @@ code {
 
 header {
   height: 10%;
-  width: 100%;
+  max-width: 100%;
   top: 0;
   left: 0;
 }
 
 footer {
   height: 10%;
-  width: 100%;
+  max-width: 100%;
   bottom: 0;
   left: 0;
 }

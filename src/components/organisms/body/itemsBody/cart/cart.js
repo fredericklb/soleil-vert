@@ -1,66 +1,116 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ShoppingCartIcon from '../../../../../assets/icons/shopping_cart.svg';
+import AddIcon from '../../../../../assets/icons/add.svg';
+import RemoveIcon from '../../../../../assets/icons/remove.svg';
+import DeleteIcon from '../../../../../assets/icons/delete.svg';
+import './cart.scss';
 
-function Cart({ items, cart, setCart }) {
+function Cart({ cart, setCart }) {
   const navigate = useNavigate();
+  const [totalItems, setTotalItems] = useState(0);
 
-  // Sauvegarder le panier dans le local storage à chaque changement
+  // Calcul du nombre total d'articles dans le panier
+  useEffect(() => {
+    const calculateTotalItems = () => {
+      const total = cart.reduce((acc, item) => acc + item.quantite, 0);
+      setTotalItems(total);
+    };
+    calculateTotalItems();
+  }, [cart]);
+
+  // Sauvegarde du panier dans le stockage local lorsqu'il est modifié
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
-  function removeFromCart(item, quantityToRemove) {
-    const index = cart.findIndex((cartItem) => cartItem.name === item.name);
-
-    if (index !== -1) {
-      const newCart = [...cart];
-      newCart[index].quantity -= quantityToRemove;
-
-      if (newCart[index].quantity === 0) {
-        newCart.splice(index, 1);
+  // Fonction pour retirer des articles du panier
+  const removeFromCart = (itemId, quantityToRemove) => {
+    const updatedCart = cart.map((cartItem) => {
+      if (cartItem.id_article === itemId) {
+        let updatedQuantity = cartItem.quantite + quantityToRemove;
+        if (updatedQuantity > cartItem.stock) {
+          updatedQuantity = cartItem.stock
+        }
+        return { ...cartItem, quantite: updatedQuantity };
       }
+      return cartItem;
+    });
 
-      setCart(newCart);
-    }
-  }
+    const newCart = updatedCart.filter((cartItem) => cartItem.quantite > 0);
+    setCart(newCart);
+  };
 
-  function emptyCart() {
+  // Fonction pour vider complètement le panier
+  const emptyCart = () => {
     setCart([]);
-  }
+  };
 
-  function calculateTotal() {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  }
+  // Calcul du total de la commande
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => total + item.prix_vente * item.quantite, 0);
+  };
 
-  function checkout() {
+  // Gestion du passage à la page de commande
+  const handleCheckout = () => {
     localStorage.setItem('total', calculateTotal());
     navigate('/commande');
-  }
-  
+  };
 
   return (
     <div>
-      <h2>Panier</h2>
-
+      <h3>
+        <img src={ShoppingCartIcon} className="cart-icon" alt="Panier" /> Panier ({totalItems})
+      </h3>
       {cart.length === 0 ? (
         <p>Votre panier est vide.</p>
       ) : (
-        <div>
+        <div className="cart-items">
           {cart.map((item) => (
-            <div key={item.name}>
-              <p>
-                {item.name} ({item.quantity}) - {item.price} €
-              </p>
-              <button onClick={() => removeFromCart(item, -1)}>Ajouter 1</button>
-              <button onClick={() => removeFromCart(item, 1)}>Enlever 1</button>
-              <button onClick={() => removeFromCart(item, item.quantity)}>Tout enlever</button>
+            <div key={item.id_article} className="cart-item">
+              <div className="item-left">
+                <img src={item.url_image} className="cart-item-image" alt={item.nom_article} />
+                <div>
+                  <p className="item-name">{item.nom_article}</p>
+                  <div className="item-actions">
+                    <img
+                      src={RemoveIcon}
+                      className="cart-icon clickable"
+                      alt="Retirer"
+                      onClick={() => removeFromCart(item.id_article, -1)}
+                    />
+                    <p className="item-quantity">{item.quantite}</p>
+                    <img
+                      src={AddIcon}
+                      className="cart-icon clickable"
+                      alt="Ajouter"
+                      onClick={() => removeFromCart(item.id_article, 1)}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="item-right">
+                <img
+                  src={DeleteIcon}
+                  className="cart-icon clickable"
+                  alt="Supprimer"
+                  onClick={() => removeFromCart(item.id_article, -item.quantite)}
+                />
+                <p className="item-price">{item.prix_vente * item.quantite} €</p>
+              </div>
             </div>
           ))}
-
-          <p>Total: {calculateTotal()} €</p>
-
-          <button onClick={() => emptyCart()}>Vider le panier</button>
-          <button onClick={() => checkout()}>Passer à la caisse</button>
+          <div className="cart-total">
+            <p>Total: {calculateTotal()} €</p>
+          </div>
+          <div className="cart-buttons">
+            <button className="btn-empty" onClick={emptyCart}>
+              Vider le panier
+            </button>
+            <button className="btn-validate" onClick={handleCheckout}>
+              Valider le panier
+            </button>
+          </div>
         </div>
       )}
     </div>

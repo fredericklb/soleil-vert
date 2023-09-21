@@ -1,0 +1,1 @@
+export const adresseServeurAPI = 'http://localhost:8080';

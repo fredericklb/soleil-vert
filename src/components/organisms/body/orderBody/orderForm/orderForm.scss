@@ -1,0 +1,49 @@
+.order-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    &__title {
+        margin: 0;
+    }
+
+    .order-form__validate-order-button {
+        align-self: center;
+        margin-top: 16px;
+        width: auto;
+        background-color: rgba(175, 55, 135, 1);
+        color: white;
+    }
+}
+
+.order-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0;
+    width: 100%;
+
+    &__identity-row,
+    &__location-row {
+        display: flex;
+        gap: 8px;
+    }
+
+    &__name-row,
+    &__firstname-row,
+    &__email-row,
+    &__address-row,
+    &__postal-code-row,
+    &__city-row {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    &__input-postal-code {
+        max-width: 10ch;
+    }
+}

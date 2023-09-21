@@ -1,93 +1,111 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import OrderForm from './orderForm/orderForm';
+import OrderCart from './orderCart/orderCart';
 import './orderBody.scss';
 
+async function ajoutParAPI(apiName, jsonAAjouter) {
+
+
+  const response = await fetch(`${process.env.REACT_APP_BASE_URL}${apiName}?key=${process.env.REACT_APP_API_KEY}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(jsonAAjouter),
+  });
+
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+
+  const result = await response.json();
+  return result;
+}
+
 function OrderBody() {
-    const [panier, setPanier] = useState([]);
-    const [nom, setNom] = useState('');
-    const [adresse, setAdresse] = useState('');
-    const [total, setTotal] = useState(0);
+  const {
+    values: {
+      cart,
+      viderPanier,
+    },
+    jsx: OrderCartJSX,
+  } = OrderCart();
 
-    useEffect(() => {
-        const savedCart = localStorage.getItem('cart');
-        if (savedCart) {
-            setPanier(JSON.parse(savedCart));
-        }
-        const savedTotal = localStorage.getItem('total');
-        if (savedTotal) {
-            setTotal(parseFloat(savedTotal));
-        }
-    }, []);
+  const [nom, setNom] = useState('');
+  const [prenom, setPrenom] = useState('');
+  const [email, setEmail] = useState('');
+  const [adresse, setAdresse] = useState('');
+  const [codePostal, setCodePostal] = useState('');
+  const [ville, setVille] = useState('');
 
-    const validerCommande = () => {
-        console.log('Commande validée !');
-    };
+  const validerCommande = async () => {
+   
+    if (
+      cart.length === 0 ||
+      nom === '' ||
+      prenom === '' ||
+      email === '' ||
+      adresse === '' ||
+      codePostal === '' ||
+      ville === ''
+    ) {
+      return;
+    }
 
-    const viderPanier = () => {
-        setPanier([]);
-        localStorage.removeItem('cart');
-        setTotal(0);
-        localStorage.removeItem('total');
-    };
+    const confirmation = window.confirm('Confirmer la commande ?');
 
-    return (
-        <div>
-            <h1>Page de commande</h1>
-            <h2>Panier</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nom de l'article</th>
-                        <th>Quantité</th>
-                        <th>Prix</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {panier.length === 0 ? (
-                        <tr>
-                            <td colSpan="3">Votre panier est vide.</td>
-                        </tr>
-                    ) : (
-                        panier.map((article) => (
-                            <tr key={article.id}>
-                                <td>{article.nom}</td>
-                                <td>{article.quantity}</td>
-                                <td>{article.prix} €</td>
-                            </tr>
-                        ))
-                    )}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colSpan="2">Total :</td>
-                        <td colSpan="1">{total} €</td>
-                    </tr>
-                </tfoot>
-            </table>
-            <button type="button" onClick={viderPanier}>
-                Vider le panier
-            </button>
-            <h2>Formulaire de commande</h2>
-            <form>
-                <label>
-                    Nom :
-                    <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} />
-                </label>
-                <br />
-                <label>
-                    Adresse :
-                    <input type="text" value={adresse} onChange={(e) => setAdresse(e.target.value)} />
-                </label>
-                <br />
-                <button
-                    type="button"
-                    onClick={validerCommande}
-                    disabled={panier.length === 0 || nom === '' || adresse === ''}
-                >
-                    Valider la commande
-                </button>
-            </form>
+    if (confirmation) {
+      console.log('Commande validée !');
+
+      const clientData = {
+        adresse_mail: email,
+        adresse: adresse,
+        nom: nom,
+        prenom: prenom,
+        codePostal: codePostal,
+        ville: ville,
+        cart: cart
+      };
+
+      const resultatPanier = await ajoutParAPI(`/api/valider_panier`, clientData);
+      if (resultatPanier.valider) {
+        viderPanier();
+      }
+    }
+  };
+
+  return (
+    <div className="order-body">
+      <h1>Commande</h1>
+      <div className='cart-form-container'>
+        <div className="cart-container">
+          {OrderCartJSX}
+
         </div>
-    );
+        <div className="form-container">
+          <OrderForm
+            formValues={{
+              nom,
+              prenom,
+              email,
+              adresse,
+              codePostal,
+              ville,
+            }}
+            formHandlers={{
+              setNom,
+              setPrenom,
+              setEmail,
+              setAdresse,
+              setCodePostal,
+              setVille,
+            }}
+            validerCommande={validerCommande}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default OrderBody;
